@@ -8,12 +8,13 @@ type Flower struct {
 	location         Location
 }
 
-func NewFlower(id string) *Flower {
+func NewFlower(id string, l Location) *Flower {
 	f := &Flower{
 		Id:               id,
 		Pollinated:       false,
 		Life:             FlowerLife,
 		PollinateCounter: 0,
+		location: l,
 	}
 	return f
 }

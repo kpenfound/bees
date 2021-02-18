@@ -10,4 +10,7 @@ const (
 	HiveLimit            = 5
 	WorldX               = 5000
 	WorldY               = 5000
+	WorldStartingHives   = 4
+	WorldStartingFlowers = 100
+	HiveStartingBees     = 4
 )
