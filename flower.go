@@ -14,7 +14,7 @@ func NewFlower(id string, l Location) *Flower {
 		Pollinated:       false,
 		Life:             FlowerLife,
 		PollinateCounter: 0,
-		location: l,
+		location:         l,
 	}
 	return f
 }

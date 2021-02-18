@@ -1,15 +1,15 @@
 package main
 
 import (
-	"github.com/hashicorp/go-hclog"
 	"github.com/go-redis/redis/v8"
+	"github.com/hashicorp/go-hclog"
 )
 
 type World struct {
-	Hives []*Hive
+	Hives   []*Hive
 	Flowers []*Flower
-	redis *redis.Client
-	nomad *NomadAPI
+	redis   *redis.Client
+	nomad   *NomadAPI
 }
 
 func NewWorld() *World {
@@ -21,13 +21,13 @@ func NewWorld() *World {
 
 	for x := 0; x <= WorldX; x++ {
 		for y := 0; y <= WorldY; y++ {
-			if x % (WorldX / WorldStartingFlowers) == 0 && y % (WorldY / WorldStartingFlowers) == 0 {
-				f := NewFlower(NewId(), Location{X:x,Y:y})
+			if x%(WorldX/WorldStartingFlowers) == 0 && y%(WorldY/WorldStartingFlowers) == 0 {
+				f := NewFlower(NewId(), Location{X: x, Y: y})
 				w.Flowers = append(w.Flowers, f)
 			}
 
-			if x % (WorldX / WorldStartingHives) == 0 && y % (WorldY / WorldStartingHives) == 0 {
-				h := NewHive(NewId(), Location{X:x,Y:y})
+			if x%(WorldX/WorldStartingHives) == 0 && y%(WorldY/WorldStartingHives) == 0 {
+				h := NewHive(NewId(), Location{X: x, Y: y})
 				w.Hives = append(w.Hives, h)
 			}
 		}

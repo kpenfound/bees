@@ -9,8 +9,8 @@ type Hive struct {
 
 func NewHive(id string, l Location) *Hive {
 	h := &Hive{
-		Id: id,
-		Nectar: 0,
+		Id:       id,
+		Nectar:   0,
 		location: l,
 	}
 	return h
