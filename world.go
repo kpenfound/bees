@@ -1,13 +1,9 @@
 package main
 
-import (
-	"github.com/go-redis/redis/v8"
-)
-
 type World struct {
 	Hives   []*Hive
 	Flowers []*Flower
-	redis   *redis.Client
+	redis   *Redis
 	nomad   *NomadAPI
 }
 
@@ -15,7 +11,7 @@ func NewWorld() *World {
 	w := &World{}
 
 	w.nomad = NewNomad()
-	w.redis = NewRedisClient()
+	w.redis = NewRedis()
 
 	for x := 0; x <= WorldX; x++ {
 		for y := 0; y <= WorldY; y++ {
@@ -26,6 +22,7 @@ func NewWorld() *World {
 
 			if x%(WorldX/WorldStartingHives) == 0 && y%(WorldY/WorldStartingHives) == 0 {
 				h := NewHive(NewId(), Location{X: x, Y: y})
+				h.SpawnBees(w.nomad, w.redis, HiveStartingBees)
 				w.Hives = append(w.Hives, h)
 			}
 		}
@@ -37,7 +34,7 @@ func (w *World) Simulate() {
 	// Do simulation
 }
 
-func (w *World) Step() {
+func (w *World) step() {
 }
 
 type Location struct {

@@ -13,4 +13,9 @@ const (
 	WorldStartingHives   = 4
 	WorldStartingFlowers = 100
 	HiveStartingBees     = 4
+	Tick                 = 100
+	HiveCode             = 'h'
+	FlowerCode           = 'f'
+	BeeCode              = 'b'
+	EmptyCode            = ' '
 )

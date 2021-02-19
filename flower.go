@@ -3,8 +3,8 @@ package main
 type Flower struct {
 	Id               string
 	Pollinated       bool
-	Life             uint64
-	PollinateCounter uint64
+	Life             int
+	PollinateCounter int
 	location         Location
 }
 
@@ -19,11 +19,19 @@ func NewFlower(id string, l Location) *Flower {
 	return f
 }
 
-func (f *Flower) Step() {
+func (f *Flower) step() {
 	f.Life--
 }
 
-func (f *Flower) Pollinate() {
+func (f *Flower) Spawn() {
+	// Save
+}
+
+func (f *Flower) Pollinate(r *Redis) {
 	f.Pollinated = true
 	f.PollinateCounter++
+}
+
+func (f *Flower) Die() {
+	// Delete
 }
