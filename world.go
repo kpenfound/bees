@@ -1,5 +1,9 @@
 package main
 
+import (
+	"math"
+)
+
 type World struct {
 	Hives   []*Hive
 	Flowers []*Flower
@@ -40,6 +44,29 @@ func (w *World) step() {
 type Location struct {
 	X int
 	Y int
+}
+
+func (a Location) distance(b Location) int {
+	dX := float64(b.X - a.X)
+	dY := float64(b.Y - a.Y)
+	return int(math.Sqrt(dX*dX + dY*dY))
+}
+
+func (a Location) bearing(b Location) int {
+	dX := float64(b.X - a.X)
+	dY := float64(b.Y - a.Y)
+	return int(math.Atan2(dY, dX))
+}
+
+func (a Location) moveTo(b Location) Location {
+	dX := float64(b.X - a.X)
+	dY := float64(b.Y - a.Y)
+	if math.Abs(dX) > math.Abs(dY) {
+		a.X += int(dX / math.Abs(dX))
+	} else {
+		a.Y += int(dY / math.Abs(dY))
+	}
+	return a
 }
 
 func NewId() string {

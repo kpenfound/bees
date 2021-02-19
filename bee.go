@@ -76,18 +76,37 @@ func (b *Bee) Lifecycle() {
 
 // Heres the fun part
 func (b *Bee) decide(vision [][]byte) (Location, byte) {
+	target := Location{X: BeeSight * 2, Y: BeeSight * 2}
+	relativeLoc := Location{X: BeeSight, Y: BeeSight} // Hmm
 	for i := 0; i < len(vision); i++ {
 		for j := 0; j < len(vision[i]); j++ {
 			switch vision[i][j] {
 			case BeeCode:
 				break
 			case FlowerCode:
+				if b.Nectar < BeeNectarCapacity {
+					loc := Location{X: i, Y: j}
+					if relativeLoc.distance(loc) < relativeLoc.distance(target) {
+						target = loc
+					}
+				}
 				break
 			case HiveCode:
+				if b.Nectar == BeeNectarCapacity {
+					loc := Location{X: i, Y: j}
+					if relativeLoc.distance(loc) < relativeLoc.distance(target) {
+						target = loc
+					}
+				}
 				break
 			}
 		}
 	}
-	b.lastMove = 0
-	return Location{X: 0, Y: 0}, EmptyCode
+	bearing := relativeLoc.bearing(target)
+	b.lastMove = bearing
+	move := relativeLoc.moveTo(target)
+	landing := vision[move.X][move.Y]
+	newX := b.location.X + (move.X - BeeSight)
+	newY := b.location.Y + (move.Y - BeeSight)
+	return Location{X: newX, Y: newY}, landing
 }

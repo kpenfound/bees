@@ -4,6 +4,7 @@ const (
 	BeeTravelLimit       = 1000
 	BeeLife              = 1000000
 	BeeSight             = 200
+	BeeNectarCapacity    = 5
 	FlowerPollinateLimit = 4
 	FlowerLife           = 10000
 	HiveBeeLimit         = 50
