@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"os"
 	"strings"
 	"time"
 )
@@ -15,12 +16,13 @@ type Bee struct {
 	lastMove     int
 }
 
-func NewBee(id string) *Bee {
+func NewBee(l Location) *Bee {
 	b := &Bee{
-		Id:           id,
+		Id:           NewId(),
 		Nectar:       0,
 		TripDuration: 0,
 		Life:         BeeLife,
+		location:     l,
 	}
 	return b
 }
@@ -32,19 +34,14 @@ func (b *Bee) GetJobspec() NomadJob {
 	return job
 }
 
-func (b *Bee) step() {
-	b.TripDuration++
-	b.Life--
-}
-
-func (b *Bee) Spawn(n *NomadAPI, r *Redis) {
+func (b *Bee) Spawn(n *NomadAPI) {
 	n.CreateJob(b)
-	r.SaveBee(*b)
 }
 
-func (b *Bee) Die() {
-	n := NewNomad()
-	n.DeleteJob(b)
+func (b *Bee) Die(r *Redis) {
+	r.DeleteBee(b)
+	//Goodbye
+	os.Exit(0)
 }
 
 func (b *Bee) Lifecycle() {
@@ -57,19 +54,25 @@ func (b *Bee) Lifecycle() {
 		case FlowerCode:
 			f := r.GetFlowerAt(loc)
 			f.Pollinate(r)
-			r.SaveFlower(f)
 			b.Nectar++
 			break
 		case HiveCode:
 			h := r.GetHiveAt(loc)
 			h.Visit(b.Nectar, r)
-			r.SaveHive(h)
 			b.Nectar = 0
 			b.TripDuration = 0
 			break
 		}
 
-		r.SaveBee(*b)
+		b.TripDuration++
+		b.Life--
+
+		if b.Life <= 0 || b.TripDuration > BeeTravelLimit {
+			b.Die(r)
+		} else {
+			r.SaveBee(*b)
+		}
+
 		time.Sleep(Tick * time.Millisecond)
 	}
 }

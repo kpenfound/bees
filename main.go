@@ -8,7 +8,6 @@ import (
 func main() {
 	// Simulate
 	fmt.Println("Bees!")
-	w := NewWorld()
-	w.Simulate()
+	NewWorld()
 	os.Exit(0)
 }

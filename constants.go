@@ -5,9 +5,8 @@ const (
 	BeeLife              = 1000000
 	BeeSight             = 200
 	BeeNectarCapacity    = 5
+	BeeNectarCost        = 50
 	FlowerPollinateLimit = 4
-	FlowerLife           = 10000
-	HiveBeeLimit         = 50
 	HiveLimit            = 5
 	WorldX               = 5000
 	WorldY               = 5000

@@ -2,36 +2,41 @@ package main
 
 type Flower struct {
 	Id               string
-	Pollinated       bool
-	Life             int
 	PollinateCounter int
 	location         Location
 }
 
-func NewFlower(id string, l Location) *Flower {
+func NewFlower(l Location) *Flower {
 	f := &Flower{
-		Id:               id,
-		Pollinated:       false,
-		Life:             FlowerLife,
+		Id:               NewId(),
 		PollinateCounter: 0,
 		location:         l,
 	}
 	return f
 }
 
-func (f *Flower) step() {
-	f.Life--
+func (f *Flower) Spread(r *Redis) {
+	newLoc := findFreeNeighbor(f.location, r)
+	newf := NewFlower(newLoc)
+	r.SaveFlower(*newf)
 }
 
-func (f *Flower) Spawn() {
-	// Save
+func findFreeNeighbor(loc Location, r *Redis) Location {
+	// TODO
+	neighbor := Location{X: -1, Y: -1}
+	return neighbor
 }
 
 func (f *Flower) Pollinate(r *Redis) {
-	f.Pollinated = true
+	f.Spread(r)
 	f.PollinateCounter++
+	if f.PollinateCounter >= FlowerPollinateLimit {
+		f.Die(r)
+	} else {
+		r.SaveFlower(*f)
+	}
 }
 
-func (f *Flower) Die() {
-	// Delete
+func (f *Flower) Die(r *Redis) {
+	r.DeleteFlower(f)
 }
