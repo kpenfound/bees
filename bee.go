@@ -3,8 +3,6 @@ package main
 import (
 	"encoding/json"
 	"strings"
-
-	"github.com/hashicorp/go-hclog"
 )
 
 type Bee struct {
@@ -27,7 +25,7 @@ func NewBee(id string) *Bee {
 
 func (b *Bee) GetJobspec() NomadJob {
 	var job NomadJob
-	spec := strings.Replace(DefaultJob, "0-0", b.Id, -1)
+	spec := strings.Replace(DefaultJob, "bzzz", b.Id, -1)
 	json.Unmarshal([]byte(spec), &job)
 	return job
 }
@@ -37,8 +35,12 @@ func (b *Bee) Step() {
 	b.Life--
 }
 
+func (b *Bee) Spawn() {
+	n := NewNomad()
+	n.CreateJob(b)
+}
+
 func (b *Bee) Die() {
-	logger := hclog.New(nil)
-	n := NewNomad(logger)
+	n := NewNomad()
 	n.DeleteJob(b)
 }

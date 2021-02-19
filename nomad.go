@@ -4,16 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-
-	"github.com/hashicorp/go-hclog"
 )
 
-func NewNomad(logger hclog.Logger) *NomadAPI {
+func NewNomad() *NomadAPI {
 	addr := os.Getenv("NOMAD_ADDR")
 	if addr == "" {
 		addr = "http://localhost:4646"
 	}
-	api := NewAPI(fmt.Sprintf("%s/v1", addr), logger)
+	api := NewAPI(fmt.Sprintf("%s/v1", addr))
 	return &NomadAPI{
 		api: api,
 	}
@@ -89,8 +87,8 @@ type NomadJob struct {
 
 var DefaultJob = fmt.Sprintf(`{
 	"Job": {
-	  "ID": "0-0",
-	  "Name": "0-0",
+	  "ID": "bzzz",
+	  "Name": "bzzz",
 	  "Type": "service",
 	  "Datacenters": ["dc1"],
 	  "TaskGroups": [{
@@ -120,7 +118,7 @@ var DefaultJob = fmt.Sprintf(`{
 				}]
 			  },
 			  "Services": [{
-				  "Name": "0-0",
+				  "Name": "bzzz",
 				  "PortLabel": "udp",
 				  "Checks": [{
 					  "Name": "check",

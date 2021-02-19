@@ -5,21 +5,17 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-
-	"github.com/hashicorp/go-hclog"
 )
 
 type API struct {
 	BaseUrl string
 	client  *http.Client
-	logger  hclog.Logger
 }
 
-func NewAPI(baseUrl string, logger hclog.Logger) *API {
+func NewAPI(baseUrl string) *API {
 	return &API{
 		BaseUrl: baseUrl,
 		client:  http.DefaultClient,
-		logger:  logger,
 	}
 }
 
@@ -54,9 +50,5 @@ func (a *API) Request(method string, path string, data []byte) (int, []byte) {
 	defer resp.Body.Close()
 
 	body, _ := ioutil.ReadAll(resp.Body)
-	a.logger.Info("submitted http request",
-		"status_code", resp.StatusCode,
-		"method", method,
-		"path", path)
 	return resp.StatusCode, body
 }

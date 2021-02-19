@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/go-redis/redis/v8"
-	"github.com/hashicorp/go-hclog"
 )
 
 type World struct {
@@ -15,8 +14,7 @@ type World struct {
 func NewWorld() *World {
 	w := &World{}
 
-	logger := hclog.New(nil)
-	w.nomad = NewNomad(logger)
+	w.nomad = NewNomad()
 	w.redis = NewRedisClient()
 
 	for x := 0; x <= WorldX; x++ {
