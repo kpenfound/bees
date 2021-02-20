@@ -94,42 +94,16 @@ var DefaultJob = fmt.Sprintf(`{
 	  "TaskGroups": [{
 		  "Name": "bee",
 		  "Count": 1,
-		  "EphemeralDisk": {
-			"SizeMB": 150
-		  },
 		  "Tasks": [{
 			  "Name": "bee",
-			  "Driver": "raw_exec",
+			  "Driver": "docker",
 			  "Config": {
-				"command": "bees",
-				"args": ["run"]
-			  },
-			  "Env": {
-				  
-			  },
+				"image": "bees:latest"
+			  }
 			  "Resources": {
 				"CPU": 60,
-				"MemoryMB": 35,
-				"DiskMB": 10,
-				"Networks": [{
-					"DynamicPorts": [{
-						"Label": "udp"
-					}]
-				}]
-			  },
-			  "Services": [{
-				  "Name": "bzzz",
-				  "PortLabel": "udp",
-				  "Checks": [{
-					  "Name": "check",
-					  "Type": "script",
-					  "Command": "bees",
-					  "Args": ["check"],
-					  "Interval": 1000000000,
-					  "Timeout": 2000000000,
-					  "InitialStatus": "passing"
-					}]
-				}]
+				"MemoryMB": 128
+			  }
 			}]
 		}]
 	}

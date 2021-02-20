@@ -14,11 +14,11 @@ func main() {
 		os.Exit(0)
 	}
 
-	if args[1] == "start" {
+	if args[0] == "start" {
 		NewWorld()
 	}
 
-	if args[1] == "bee" {
+	if args[0] == "bee" {
 		r := NewRedis()
 		id := os.Getenv("NOMAD_JOB_ID")
 		b, _ := r.GetBee(id)
