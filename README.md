@@ -26,7 +26,8 @@ pollinated, a flower can create a new flower.
 
 ## TODO
 - * Nomad api
-- Job lifecycles
-- Bee vision
+- * Job lifecycles
+- * Data models
+- * Bee vision
 - bee ai
 - run!

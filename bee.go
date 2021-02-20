@@ -34,8 +34,9 @@ func (b *Bee) GetJobspec() NomadJob {
 	return job
 }
 
-func (b *Bee) Spawn(n *NomadAPI) {
+func (b *Bee) Spawn(n *NomadAPI, r *Redis) {
 	n.CreateJob(b)
+	r.SaveBee(*b)
 }
 
 func (b *Bee) Die(r *Redis) {
@@ -47,17 +48,17 @@ func (b *Bee) Die(r *Redis) {
 func (b *Bee) Lifecycle() {
 	r := NewRedis()
 	for {
-		see := r.See(b.location, BeeSight)
+		see, _ := r.See(b.location, BeeSight, b.Id)
 		loc, landed := b.decide(see)
 		b.location = loc
 		switch landed {
 		case FlowerCode:
-			f := r.GetFlowerAt(loc)
+			f, _ := r.GetFlowerAt(loc)
 			f.Pollinate(r)
 			b.Nectar++
 			break
 		case HiveCode:
-			h := r.GetHiveAt(loc)
+			h, _ := r.GetHiveAt(loc)
 			h.Visit(b.Nectar, r)
 			b.Nectar = 0
 			b.TripDuration = 0

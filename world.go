@@ -19,7 +19,7 @@ func NewWorld() {
 
 			if x%(WorldX/WorldStartingHives) == 0 && y%(WorldY/WorldStartingHives) == 0 {
 				h := NewHive(Location{X: x, Y: y})
-				h.SpawnBees(n, HiveStartingBees)
+				h.SpawnBees(n, r, HiveStartingBees)
 				r.SaveHive(*h)
 			}
 		}

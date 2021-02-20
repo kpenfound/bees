@@ -20,18 +20,18 @@ func (h *Hive) Visit(nectar int, r *Redis) {
 	if h.Nectar >= BeeNectarCost {
 		h.Nectar -= BeeNectarCost
 		n := NewNomad()
-		h.SpawnBee(n)
+		h.SpawnBee(n, r)
 	}
 	r.SaveHive(*h)
 }
 
-func (h *Hive) SpawnBee(n *NomadAPI) {
+func (h *Hive) SpawnBee(n *NomadAPI, r *Redis) {
 	b := NewBee(h.location)
-	b.Spawn(n)
+	b.Spawn(n, r)
 }
 
-func (h *Hive) SpawnBees(n *NomadAPI, count int) {
+func (h *Hive) SpawnBees(n *NomadAPI, r *Redis, count int) {
 	for x := 0; x < count; x++ {
-		h.SpawnBee(n)
+		h.SpawnBee(n, r)
 	}
 }
