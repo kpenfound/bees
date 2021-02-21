@@ -1,7 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"math"
+	"math/rand"
+	"strings"
 
 	"github.com/google/uuid"
 )
@@ -10,19 +13,21 @@ func NewWorld() {
 	n := NewNomad()
 	r := NewRedis()
 
-	for x := 0; x <= WorldX; x++ {
-		for y := 0; y <= WorldY; y++ {
-			if x%(WorldX/WorldStartingFlowers) == 0 && y%(WorldY/WorldStartingFlowers) == 0 {
-				f := NewFlower(Location{X: x, Y: y})
-				r.SaveFlower(*f)
-			}
+	for i := 0; i < WorldStartingFlowers; i++ {
+		x := rand.Intn(WorldX)
+		y := rand.Intn(WorldY)
+		f := NewFlower(Location{X: x, Y: y})
+		r.SaveFlower(*f)
+		fmt.Printf("Created flower at %d %d\n", x, y)
+	}
 
-			if x%(WorldX/WorldStartingHives) == 0 && y%(WorldY/WorldStartingHives) == 0 {
-				h := NewHive(Location{X: x, Y: y})
-				h.SpawnBees(n, r, HiveStartingBees)
-				r.SaveHive(*h)
-			}
-		}
+	for j := 0; j < WorldStartingHives; j++ {
+		x := rand.Intn(WorldX)
+		y := rand.Intn(WorldY)
+		h := NewHive(Location{X: x, Y: y})
+		h.SpawnBees(n, r, HiveStartingBees)
+		r.SaveHive(*h)
+		fmt.Printf("Created hive at %d %d\n", x, y)
 	}
 }
 
@@ -55,5 +60,6 @@ func (a Location) moveTo(b Location) Location {
 }
 
 func NewId() string {
-	return uuid.NewString()
+	id := uuid.NewString()
+	return strings.Replace(id, "-", "", -1)
 }

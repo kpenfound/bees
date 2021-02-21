@@ -241,9 +241,12 @@ func (r *Redis) SetLocation(l Location, code byte, id string) error {
 
 func (r *Redis) See(l Location, distance int, id string) ([][]byte, error) {
 	// Empty sight
-	s := [][]byte{}
+	s := make([][]byte, distance*2)
 	for i := 0; i < distance*2; i++ {
 		for j := 0; j < distance*2; j++ {
+			if j == 0 {
+				s[i] = make([]byte, distance*2)
+			}
 			s[i][j] = EmptyCode
 		}
 	}

@@ -27,8 +27,7 @@ func (n *NomadAPI) CreateJob(b *Bee) {
 	if err != nil {
 		panic(err)
 	}
-	status, body := n.api.Post("/jobs", spec)
-	fmt.Println(status, string(body))
+	_, _ = n.api.Post("/jobs", spec)
 }
 
 func (n *NomadAPI) DeleteJob(b *Bee) {
@@ -43,43 +42,18 @@ type NomadJob struct {
 		Type        string   `json:"Type"`
 		Datacenters []string `json:"Datacenters"`
 		TaskGroups  []struct {
-			Name          string `json:"Name"`
-			Count         int    `json:"Count"`
-			EphemeralDisk struct {
-				SizeMB int `json:"SizeMB"`
-			} `json:"EphemeralDisk"`
+			Name  string `json:"Name"`
+			Count int    `json:"Count"`
 			Tasks []struct {
 				Name   string `json:"Name"`
 				Driver string `json:"Driver"`
 				Config struct {
-					Command string   `json:"command"`
-					Args    []string `json:"args"`
+					Image string `json:"image"`
 				} `json:"Config"`
-				Env       interface{} `json:"Env"`
 				Resources struct {
 					CPU      int `json:"CPU"`
 					MemoryMB int `json:"MemoryMB"`
-					DiskMB   int `json:"DiskMB"`
-					Networks []struct {
-						DynamicPorts []struct {
-							Label string `json:"Label"`
-						} `json:"DynamicPorts"`
-					} `json:"Networks"`
 				} `json:"Resources"`
-				Services []struct {
-					Name      string   `json:"Name"`
-					PortLabel string   `json:"PortLabel"`
-					Tags      []string `json:"Tags"`
-					Checks    []struct {
-						Name          string   `json:"Name"`
-						Type          string   `json:"Type"`
-						Command       string   `json:"Command"`
-						Args          []string `json:"Args"`
-						Interval      int64    `json:"Interval"`
-						Timeout       int64    `json:"Timeout"`
-						InitialStatus string   `json:"InitialStatus"`
-					} `json:"Checks"`
-				} `json:"Services"`
 			} `json:"Tasks"`
 		} `json:"TaskGroups"`
 	} `json:"Job"`
@@ -89,7 +63,7 @@ var DefaultJob = fmt.Sprintf(`{
 	"Job": {
 	  "ID": "bzzz",
 	  "Name": "bzzz",
-	  "Type": "service",
+	  "Type": "batch",
 	  "Datacenters": ["dc1"],
 	  "TaskGroups": [{
 		  "Name": "bee",
@@ -98,8 +72,8 @@ var DefaultJob = fmt.Sprintf(`{
 			  "Name": "bee",
 			  "Driver": "docker",
 			  "Config": {
-				"image": "bees:latest"
-			  }
+				"image": "bees:local"
+			  },
 			  "Resources": {
 				"CPU": 60,
 				"MemoryMB": 128

@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type Hive struct {
 	Id       string
 	Nectar   int
@@ -28,6 +30,7 @@ func (h *Hive) Visit(nectar int, r *Redis) {
 func (h *Hive) SpawnBee(n *NomadAPI, r *Redis) {
 	b := NewBee(h.location)
 	b.Spawn(n, r)
+	fmt.Printf("Bee spawned at %d %d\n", h.location.X, h.location.Y)
 }
 
 func (h *Hive) SpawnBees(n *NomadAPI, r *Redis, count int) {
