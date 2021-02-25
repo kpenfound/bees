@@ -10,7 +10,10 @@ import (
 )
 
 func NewWorld() {
-	n := NewNomad()
+	n, err := NewNomad()
+	if err != nil {
+		fmt.Println(err)
+	}
 	r := NewRedis()
 
 	for i := 0; i < WorldStartingFlowers; i++ {

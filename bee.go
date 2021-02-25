@@ -1,10 +1,8 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
-	"strings"
 	"time"
 )
 
@@ -28,15 +26,8 @@ func NewBee(l Location) *Bee {
 	return b
 }
 
-func (b *Bee) GetJobspec() NomadJob {
-	var job NomadJob
-	spec := strings.Replace(DefaultJob, "bzzz", b.Id, -1)
-	json.Unmarshal([]byte(spec), &job)
-	return job
-}
-
 func (b *Bee) Spawn(n *NomadAPI, r *Redis) {
-	n.CreateJob(b)
+	n.CreateBeeJob(b)
 	r.SaveBee(*b)
 }
 

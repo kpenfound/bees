@@ -21,7 +21,10 @@ func (h *Hive) Visit(nectar int, r *Redis) {
 	h.Nectar += nectar
 	if h.Nectar >= BeeNectarCost {
 		h.Nectar -= BeeNectarCost
-		n := NewNomad()
+		n, err := NewNomad()
+		if err != nil {
+			fmt.Println(err)
+		}
 		h.SpawnBee(n, r)
 	}
 	r.SaveHive(*h, false)

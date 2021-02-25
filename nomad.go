@@ -1,84 +1,71 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
+
+	nomad "github.com/hashicorp/nomad/api"
 )
 
-func NewNomad() *NomadAPI {
+type NomadAPI struct {
+	client *nomad.Client
+}
+
+func NewNomad() (*NomadAPI, error) {
 	addr := os.Getenv("NOMAD_ADDR")
 	if addr == "" {
 		addr = "http://localhost:4646"
 	}
-	api := NewAPI(fmt.Sprintf("%s/v1", addr))
-	return &NomadAPI{
-		api: api,
-	}
+	c, err := nomad.NewClient(&nomad.Config{Address: addr})
+
+	return &NomadAPI{client: c}, err
 }
 
-type NomadAPI struct {
-	api *API
-}
-
-func (n *NomadAPI) CreateJob(b *Bee) {
-	job := b.GetJobspec()
-	spec, err := json.Marshal(job)
+func (n *NomadAPI) CreateBeeJob(b *Bee) error {
+	jobsApi := n.client.Jobs()
+	job, err := jobsApi.ParseHCL(NomadBeeHCL, true)
 	if err != nil {
-		panic(err)
+		return err
 	}
-	_, _ = n.api.Post("/jobs", spec)
+
+	job.ID = &b.Id
+	job.Name = &b.Id
+
+	_, _, err = jobsApi.Register(job, &nomad.WriteOptions{})
+	return err
 }
 
-func (n *NomadAPI) DeleteJob(b *Bee) {
-	path := fmt.Sprintf("/job/%s?purge=true", b.Id)
-	n.api.Delete(path)
-}
-
-type NomadJob struct {
-	Job struct {
-		ID          string   `json:"ID"`
-		Name        string   `json:"Name"`
-		Type        string   `json:"Type"`
-		Datacenters []string `json:"Datacenters"`
-		TaskGroups  []struct {
-			Name  string `json:"Name"`
-			Count int    `json:"Count"`
-			Tasks []struct {
-				Name   string `json:"Name"`
-				Driver string `json:"Driver"`
-				Config struct {
-					Image string `json:"image"`
-				} `json:"Config"`
-				Resources struct {
-					CPU      int `json:"CPU"`
-					MemoryMB int `json:"MemoryMB"`
-				} `json:"Resources"`
-			} `json:"Tasks"`
-		} `json:"TaskGroups"`
-	} `json:"Job"`
-}
-
-var DefaultJob = fmt.Sprintf(`{
-	"Job": {
-	  "ID": "bzzz",
-	  "Name": "bzzz",
-	  "Type": "batch",
-	  "Datacenters": ["dc1"],
-	  "TaskGroups": [{
-		  "Name": "bee",
-		  "Count": 1,
-		  "Tasks": [{
-			  "Name": "bee",
-			  "Driver": "docker",
-			  "Config": {
-				"image": "bees:local"
-			  },
-			  "Resources": {
-				"CPU": 60,
-				"MemoryMB": 128
+var NomadBeeHCL = fmt.Sprintf(`
+job "bee" {
+	group "bee" {
+		network {
+		  mode = "bridge"
+		}
+		restart {
+		  attempts = 2
+		  delay    = "5s"
+		}
+		service "bee" {
+		  name = "bee"
+		  connect {
+			sidecar_service {
+			  proxy {
+				upstreams {
+				  destination_name = "redis"
+				  local_bind_port  = 6379
+				}
 			  }
-			}]
-		}]
-	}
-  }`)
+			}
+		  }
+		}
+		task "bee" {
+		  driver = "docker"
+		  env {
+			"REDIS_ADDR": "${NOMAD_UPSTREAM_ADDR_redis}"
+		  }
+		  config {
+			image = "bees:local"
+		  }
+		} 
+	  }
+}`)
