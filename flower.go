@@ -18,7 +18,7 @@ func NewFlower(l Location) *Flower {
 func (f *Flower) Spread(r *Redis) {
 	newLoc := findFreeNeighbor(f.location, r)
 	newf := NewFlower(newLoc)
-	r.SaveFlower(*newf)
+	r.SaveFlower(*newf, true)
 }
 
 func findFreeNeighbor(loc Location, r *Redis) Location {
@@ -33,7 +33,7 @@ func (f *Flower) Pollinate(r *Redis) {
 	if f.PollinateCounter >= FlowerPollinateLimit {
 		f.Die(r)
 	} else {
-		r.SaveFlower(*f)
+		r.SaveFlower(*f, false)
 	}
 }
 

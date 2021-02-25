@@ -17,7 +17,7 @@ func NewWorld() {
 		x := rand.Intn(WorldX)
 		y := rand.Intn(WorldY)
 		f := NewFlower(Location{X: x, Y: y})
-		r.SaveFlower(*f)
+		r.SaveFlower(*f, true)
 		fmt.Printf("Created flower at %d %d\n", x, y)
 	}
 
@@ -26,7 +26,7 @@ func NewWorld() {
 		y := rand.Intn(WorldY)
 		h := NewHive(Location{X: x, Y: y})
 		h.SpawnBees(n, r, HiveStartingBees)
-		r.SaveHive(*h)
+		r.SaveHive(*h, true)
 		fmt.Printf("Created hive at %d %d\n", x, y)
 	}
 }

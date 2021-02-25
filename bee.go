@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"strings"
 	"time"
@@ -42,23 +43,35 @@ func (b *Bee) Spawn(n *NomadAPI, r *Redis) {
 func (b *Bee) Die(r *Redis) {
 	r.DeleteBee(b)
 	//Goodbye
+	fmt.Println("Time to die...")
 	os.Exit(0)
 }
 
 func (b *Bee) Lifecycle() {
 	r := NewRedis()
 	for {
-		see, _ := r.See(b.location, BeeSight, b.Id)
+		see, err := r.See(b.location, BeeSight, b.Id)
+		if err != nil {
+			fmt.Println(err)
+			b.Die(r)
+		}
 		loc, landed := b.decide(see)
 		b.location = loc
 		switch landed {
 		case FlowerCode:
-			f, _ := r.GetFlowerAt(loc)
+			f, err := r.GetFlowerAt(loc)
+			if err != nil {
+				fmt.Println(err)
+			}
 			f.Pollinate(r)
 			b.Nectar++
 			break
 		case HiveCode:
-			h, _ := r.GetHiveAt(loc)
+			h, err := r.GetHiveAt(loc)
+			if err != nil {
+				fmt.Println(err)
+				b.Die(r)
+			}
 			h.Visit(b.Nectar, r)
 			b.Nectar = 0
 			b.TripDuration = 0

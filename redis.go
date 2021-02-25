@@ -38,10 +38,17 @@ func NewRedisClient() *redis.Client {
 	return rdb
 }
 
-func (r *Redis) SaveHive(h Hive) error {
+func (r *Redis) SaveHive(h Hive, setLoc bool) error {
 	j, err := json.Marshal(h)
 	if err != nil {
 		return err
+	}
+
+	if setLoc {
+		err := r.SetLocation(h.location, HiveCode, h.Id)
+		if err != nil {
+			return err
+		}
 	}
 	return r.client.Set(r.ctx, h.Id, j, 0).Err()
 }
@@ -72,10 +79,17 @@ func (r *Redis) GetHiveAt(l Location) (Hive, error) {
 	return Hive{}, nil
 }
 
-func (r *Redis) SaveFlower(f Flower) error {
+func (r *Redis) SaveFlower(f Flower, setLoc bool) error {
 	j, err := json.Marshal(f)
 	if err != nil {
 		return err
+	}
+
+	if setLoc {
+		err := r.SetLocation(f.location, FlowerCode, f.Id)
+		if err != nil {
+			return err
+		}
 	}
 	return r.client.Set(r.ctx, f.Id, j, 0).Err()
 }
@@ -153,7 +167,7 @@ func redisLocationKey(id string) string {
 }
 
 func redisCoordScoreKey(code byte, id string, x int) string {
-	return fmt.Sprintf("%s:%s:%d", code, id, x)
+	return fmt.Sprintf("%s:%s:%d", string(code), id, x)
 }
 
 func breakCoordScoreId(combinedKey string) (byte, string, int) {
@@ -241,12 +255,12 @@ func (r *Redis) SetLocation(l Location, code byte, id string) error {
 
 func (r *Redis) See(l Location, distance int, id string) ([][]byte, error) {
 	// Empty sight
-	s := make([][]byte, distance*2)
-	for i := 0; i < distance*2; i++ {
-		for j := 0; j < distance*2; j++ {
-			if j == 0 {
-				s[i] = make([]byte, distance*2)
-			}
+	sightRangeX := int(math.Min(float64(distance*2), WorldX))
+	sightRangeY := int(math.Min(float64(distance*2), WorldY))
+	s := make([][]byte, sightRangeX)
+	for i := 0; i < sightRangeX; i++ {
+		s[i] = make([]byte, sightRangeY)
+		for j := 0; j < sightRangeY; j++ {
 			s[i][j] = EmptyCode
 		}
 	}
@@ -268,7 +282,7 @@ func (r *Redis) See(l Location, distance int, id string) ([][]byte, error) {
 	}
 	storeKey := fmt.Sprintf("sight-%s", id)
 
-	err := r.client.ZInterStore(r.ctx, storeKey, zs).Err()
+	err := r.client.ZUnionStore(r.ctx, storeKey, zs).Err()
 	if err != nil {
 		return nil, err
 	}

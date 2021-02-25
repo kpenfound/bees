@@ -24,7 +24,7 @@ func (h *Hive) Visit(nectar int, r *Redis) {
 		n := NewNomad()
 		h.SpawnBee(n, r)
 	}
-	r.SaveHive(*h)
+	r.SaveHive(*h, false)
 }
 
 func (h *Hive) SpawnBee(n *NomadAPI, r *Redis) {

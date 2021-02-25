@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 )
 
 func main() {
@@ -25,6 +26,7 @@ func main() {
 		r := NewRedis()
 		id := os.Getenv("NOMAD_JOB_NAME")
 		b, _ := r.GetBee(id)
+		fmt.Printf("Starting bee with id %s\n", b.Id)
 		b.Lifecycle()
 	}
 
@@ -40,7 +42,26 @@ func main() {
 				fmt.Println(err)
 				os.Exit(0)
 			}
-			fmt.Printf("%+v\n", m)
+
+			// Clear
+			fmt.Print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+			// Top border
+			for j := 0; j < len(m[0]); j++ {
+				fmt.Print("=")
+			}
+			fmt.Print("=\n")
+			// Map content
+			for x := 0; x < len(m); x++ {
+				fmt.Printf("|%s|\n", string(m[x]))
+			}
+			// Bottom border
+			for j := 0; j < len(m[0]); j++ {
+				fmt.Print("=")
+			}
+			fmt.Print("=\n\n")
+
+			// Refresh rate
+			time.Sleep(time.Second)
 		}
 	}
 	os.Exit(0)
@@ -51,7 +72,7 @@ func setupInterrupt() {
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		<-c
-		fmt.Println("\r- Ctrl+C pressed in Terminal")
+		fmt.Println("\n\nCtrl+C pressed in Terminal. Goodbye")
 		os.Exit(0)
 	}()
 }
