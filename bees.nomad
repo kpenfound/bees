@@ -16,7 +16,7 @@ job "bees" {
       delay    = "5s"
     }
 
-    service "redis" {
+    service {
       name = "redis"
       port = "6379"
 
@@ -47,7 +47,7 @@ job "bees" {
       delay    = "5s"
     }
 
-    service "world" {
+    service {
       name = "world"
 
       connect {
@@ -66,7 +66,7 @@ job "bees" {
       driver = "docker"
 
       env {
-        "REDIS_ADDR": "${NOMAD_UPSTREAM_ADDR_redis}"
+        REDIS_ADDR = "${NOMAD_UPSTREAM_ADDR_redis}"
       }
       config {
         image = "bees:local"
