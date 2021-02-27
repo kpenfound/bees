@@ -9,7 +9,6 @@ server {
 
 client {
   enabled       = true
-  network_interface = "lo"
 }
 
 consul {

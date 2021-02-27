@@ -10,7 +10,9 @@ server = true
 bootstrap = true
 
 client_addr = "0.0.0.0"
-data_dir = "~/.consul/"
+bind_addr = "127.0.0.1"
+
+data_dir = "/opt/consul/"
 
 ui_config {
   enabled = true
