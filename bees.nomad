@@ -69,7 +69,7 @@ job "bees" {
         REDIS_ADDR = "${NOMAD_UPSTREAM_ADDR_redis}"
       }
       config {
-        image = "bees:local"
+        image = "ghcr.io/kpenfound/bees:latest"
         entrypoint = ["/usr/bin/bees", "start"]
       }
     } 
