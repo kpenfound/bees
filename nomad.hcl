@@ -14,3 +14,14 @@ client {
 consul {
   address = "localhost:8500"
 }
+
+plugin_dir = "/opt/nomad/plugins"
+
+plugin "nomad-driver-podman" {
+  config {
+    volumes {
+      enabled = true
+    }
+    recover_stopped = false
+  }
+}

@@ -59,12 +59,12 @@ job "bee" {
 		  }
 		}
 		task "bee" {
-		  driver = "docker"
+		  driver = "podman"
 		  env {
 			"REDIS_ADDR": "${NOMAD_UPSTREAM_ADDR_redis}"
 		  }
 		  config {
-			image = "ghcr.io/kpenfound/bees:latest"
+			image = "docker://ghcr.io/kpenfound/bees:latest"
 		  }
 		} 
 	  }
