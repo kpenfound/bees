@@ -36,4 +36,4 @@ pollinated, a flower can create a new flower.
 - Can't do the docker on Fedora
 - Can't do envoyproxy on arm (works on arm64)
 - Cant do network bridge on WSL2
-- For some reason can't get CNI working on Fedora
+- ~~For some reason can't get CNI working on Fedora~~ Kernel needs to be compiled with BRIDGE enabled
