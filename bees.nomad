@@ -26,9 +26,9 @@ job "bees" {
     }
 
     task "redis" {
-      driver = "podman"
+      driver = "docker"
       config {
-        image = "docker://redis:6.2.0"
+        image = "redis:6.2.0"
       }
 
       resources {
@@ -38,13 +38,16 @@ job "bees" {
   }
 
   group "world" {
-    count = 0
     network {
       mode = "bridge"
     }
 
     restart {
       attempts = 0
+    }
+
+    reschedule {
+      max_delay = "120s"
     }
 
     service {
@@ -63,13 +66,13 @@ job "bees" {
     }
 
     task "world" {
-      driver = "podman"
+      driver = "docker"
 
       env {
         REDIS_ADDR = "${NOMAD_UPSTREAM_ADDR_redis}"
       }
       config {
-        image = "docker://ghcr.io/kpenfound/bees:latest"
+        image = "ghcr.io/kpenfound/bees:latest"
         entrypoint = ["/usr/bin/bees", "start"]
       }
     } 
