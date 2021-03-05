@@ -1,3 +1,4 @@
 bees
 bees.exe
 .vagrant/
+*.log
