@@ -27,8 +27,14 @@ func NewBee(l Location) *Bee {
 }
 
 func (b *Bee) Spawn(n *NomadAPI, r *Redis) {
-	n.CreateBeeJob(b)
-	r.SaveBee(*b)
+	err := n.CreateBeeJob(b)
+	if err != nil {
+		fmt.Println(err)
+	}
+	err = r.SaveBee(*b)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func (b *Bee) Die(r *Redis) {
